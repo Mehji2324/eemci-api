@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import PublicLayout from './components/layout/PublicLayout';
 import DashboardLayout from './components/layout/DashboardLayout';
 import PortalLayout from './components/layout/PortalLayout';
+import TeacherLayout from './components/layout/TeacherLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import PageLoader from './components/ui/PageLoader';
 import { useUiStore } from './lib/store';
@@ -37,6 +38,12 @@ const PortalCourses   = lazy(() => import('./pages/portal/Courses'));
 const PortalGrades    = lazy(() => import('./pages/portal/Grades'));
 const PortalSchedule  = lazy(() => import('./pages/portal/Schedule'));
 const PortalPayments  = lazy(() => import('./pages/portal/Payments'));
+
+// Teacher
+const TeacherDashboard = lazy(() => import('./pages/teacher/Dashboard'));
+const TeacherCourses   = lazy(() => import('./pages/teacher/Courses'));
+const TeacherAttendance= lazy(() => import('./pages/teacher/Attendance'));
+const TeacherGrades    = lazy(() => import('./pages/teacher/Grades'));
 
 export default function App() {
   const { theme, lang } = useUiStore();
@@ -85,6 +92,13 @@ export default function App() {
           <Route path="/portal/grades" element={<PortalGrades />} />
           <Route path="/portal/schedule" element={<PortalSchedule />} />
           <Route path="/portal/payments" element={<PortalPayments />} />
+        </Route>
+
+        <Route element={<ProtectedRoute role="teacher"><TeacherLayout /></ProtectedRoute>}>
+          <Route path="/teacher" element={<TeacherDashboard />} />
+          <Route path="/teacher/courses" element={<TeacherCourses />} />
+          <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+          <Route path="/teacher/grades" element={<TeacherGrades />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

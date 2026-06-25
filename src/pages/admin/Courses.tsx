@@ -1,6 +1,7 @@
 import { Card, CardBody } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { Plus, Users, Clock } from 'lucide-react';
 
 const COURSES = [
@@ -15,20 +16,18 @@ const COURSES = [
 export default function Courses() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-semibold">Cours</h1>
-          <p className="text-ink-soft">{COURSES.length} cours actifs ce semestre</p>
-        </div>
-        <Button leftIcon={<Plus className="w-4 h-4" />}>Nouveau cours</Button>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <PageHeader
+        title="Cours"
+        description={`${COURSES.length} cours actifs ce semestre.`}
+        actions={<Button leftIcon={<Plus className="h-4 w-4" />}>Nouveau cours</Button>}
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {COURSES.map(c => (
           <Card key={c.code}><CardBody>
             <Badge tone="primary">{c.code}</Badge>
-            <h3 className="font-display text-lg font-semibold mt-3">{c.title}</h3>
+            <h3 className="mt-3 font-display text-lg font-semibold text-ink">{c.title}</h3>
             <p className="text-sm text-ink-soft mt-1">{c.teacher}</p>
-            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-ink-soft">
+            <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs font-medium text-ink-soft">
               <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{c.students} étudiants</span>
               <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{c.hours}h</span>
             </div>

@@ -1,11 +1,12 @@
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function Settings() {
   return (
-    <div className="space-y-6 max-w-3xl">
-      <h1 className="font-display text-3xl font-semibold">Paramètres</h1>
+    <div className="max-w-3xl space-y-6">
+      <PageHeader title="Paramètres" description="Configuration de l'institution et préférences de sécurité." />
       <Card>
         <CardHeader><CardTitle>Profil de l'institution</CardTitle></CardHeader>
         <CardBody className="space-y-4">
@@ -20,9 +21,9 @@ export default function Settings() {
         <CardHeader><CardTitle>Préférences</CardTitle></CardHeader>
         <CardBody className="space-y-4">
           {['Notifications email','Notifications SMS','Mode sombre','Authentification 2FA'].map(p => (
-            <label key={p} className="flex items-center justify-between py-2">
-              <span>{p}</span>
-              <input type="checkbox" className="w-11 h-6 rounded-full appearance-none bg-slate-200 checked:bg-primary-600 transition relative cursor-pointer" />
+            <label key={p} className="flex items-center justify-between gap-4 rounded-lg border border-slate-100 px-4 py-3">
+              <span className="text-sm font-medium text-ink">{p}</span>
+              <input type="checkbox" className="h-5 w-5 rounded border-slate-300 text-primary-600 accent-primary-600 focus:ring-primary-500" />
             </label>
           ))}
         </CardBody>

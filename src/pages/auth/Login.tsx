@@ -9,11 +9,13 @@ export default function Login() {
   const nav = useNavigate();
   const [email,setEmail]=useState(''); const [pwd,setPwd]=useState(''); const [err,setErr]=useState('');
 
-  const onSubmit = (e:React.FormEvent) => {
+  const onSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
-    const u = auth.login(email, pwd);
-    if (!u) { setErr('Identifiants invalides. Essayez admin@eemci.ma ou student@eemci.ma / demo1234'); return; }
-    nav(u.role==='admin' ? '/admin' : '/portal');
+    setErr('');
+    const u = await auth.login(email, pwd);
+    if (!u) { setErr('Identifiants invalides. Vérifiez votre email et mot de passe.'); return; }
+    const homeByRole = { admin: '/admin', teacher: '/teacher', student: '/portal' };
+    nav(homeByRole[u.role]);
   };
 
   return (
@@ -41,7 +43,7 @@ export default function Login() {
           {err && <p className="text-sm text-red-600">{err}</p>}
           <Button type="submit" size="lg" className="w-full">Se connecter</Button>
           <p className="text-xs text-ink-soft text-center">
-            Comptes démo : <code>admin@eemci.ma</code> / <code>student@eemci.ma</code> · mdp <code>demo1234</code>
+            Comptes démo : <code>admin@eemci.ma</code> / <code>teacher@eemci.ma</code> / <code>student@eemci.ma</code> · mdp <code>demo1234</code>
           </p>
           <Link to="/" className="block text-center text-sm text-primary-600 hover:underline">← Retour à l'accueil</Link>
         </form>

@@ -1,4 +1,5 @@
 import { Card, CardBody } from '@/components/ui/Card';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const DAYS = ['Lun','Mar','Mer','Jeu','Ven'];
 const HOURS = ['08:00','10:00','13:30','15:30'];
@@ -20,25 +21,25 @@ const colorMap:Record<string,string> = {
 export default function PortalSchedule() {
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Mon planning</h1>
+      <PageHeader title="Mon planning" description="Vue hebdomadaire des cours et salles." />
       <Card><CardBody>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px]">
             <thead>
               <tr>
-                <th className="p-2 text-xs text-ink-soft text-left"></th>
-                {DAYS.map(d => <th key={d} className="p-2 text-xs text-ink-soft text-left">{d}</th>)}
+                <th className="p-2 text-left text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft"></th>
+                {DAYS.map(d => <th key={d} className="p-2 text-left text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">{d}</th>)}
               </tr>
             </thead>
             <tbody>
               {HOURS.map(h => (
                 <tr key={h} className="border-t border-slate-100">
-                  <td className="p-2 text-xs text-ink-soft font-medium">{h}</td>
+                  <td className="p-2 text-xs font-medium text-ink-soft">{h}</td>
                   {DAYS.map(d => {
                     const slot = SLOTS[`${d}-${h}`];
                     return <td key={d} className="p-1.5">
                       {slot
-                        ? <div className={`p-2.5 rounded-lg border text-xs font-medium ${colorMap[slot.color]}`}>{slot.c}</div>
+                        ? <div className={`rounded-lg border p-2.5 text-xs font-medium ${colorMap[slot.color]}`}>{slot.c}</div>
                         : <div className="h-10" />
                       }
                     </td>;

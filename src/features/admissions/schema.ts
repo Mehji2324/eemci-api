@@ -16,14 +16,14 @@ export const applicationSchema = z.object({
   // Academic Background
   lastDiploma: z.string().min(2, 'Dernier diplôme obtenu requis'),
   institution: z.string().min(2, 'Établissement requis'),
-  graduationYear: z.string().min(4, 'Année d\'obtention requise'),
+  graduationYear: z.string().optional(),
   
   // Documents (URLs to Supabase Storage)
   documents: z.object({
     identityCard: z.string().optional(),
     diploma: z.string().optional(),
     transcripts: z.string().optional(),
-  })
+  }).optional()
 });
 
 export type ApplicationFormData = z.infer<typeof applicationSchema>;

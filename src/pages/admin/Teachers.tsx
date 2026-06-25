@@ -1,6 +1,7 @@
 import { Card, CardBody } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { Plus, Mail } from 'lucide-react';
 
 const TEACHERS = [
@@ -15,18 +16,16 @@ const TEACHERS = [
 export default function Teachers() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-semibold">Enseignants</h1>
-          <p className="text-ink-soft">Corps professoral EEMCI</p>
-        </div>
-        <Button leftIcon={<Plus className="w-4 h-4" />}>Inviter</Button>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <PageHeader
+        title="Enseignants"
+        description="Corps professoral EEMCI et affectations pédagogiques."
+        actions={<Button leftIcon={<Plus className="h-4 w-4" />}>Inviter</Button>}
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {TEACHERS.map(t => (
           <Card key={t.email}><CardBody>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-700 grid place-items-center text-white font-medium">
+              <div className="grid h-12 w-12 place-items-center rounded-lg bg-primary-700 text-sm font-semibold text-white">
                 {t.name.split(' ').slice(-2).map(s=>s[0]).join('')}
               </div>
               <div className="flex-1 min-w-0">
@@ -36,7 +35,7 @@ export default function Teachers() {
             </div>
             <div className="mt-4 flex items-center justify-between">
               <Badge tone="primary">{t.courses} cours</Badge>
-              <a href={`mailto:${t.email}`} className="text-ink-soft hover:text-primary-600"><Mail className="w-4 h-4" /></a>
+              <a href={`mailto:${t.email}`} className="rounded-lg p-2 text-ink-soft transition hover:bg-slate-50 hover:text-primary-600" aria-label={`Envoyer un email à ${t.name}`}><Mail className="h-4 w-4" /></a>
             </div>
           </CardBody></Card>
         ))}

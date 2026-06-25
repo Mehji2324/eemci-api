@@ -1,5 +1,7 @@
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { DataTable } from '@/components/ui/DataTable';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const G = [
   { c:'Finance d\'entreprise', cc:14.5, exam:16.5, avg:15.5 },
@@ -12,24 +14,20 @@ const tone = (g:number) => g>=16?'emerald':g>=12?'primary':'rose';
 export default function PortalGrades() {
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Mes notes</h1>
+      <PageHeader title="Mes notes" description="Résultats du semestre en contrôle continu et examens." />
       <Card>
         <CardHeader><CardTitle>Semestre 3 — Moyenne 15.8/20</CardTitle></CardHeader>
         <CardBody>
-          <table className="w-full text-sm">
-            <thead className="text-left text-xs uppercase text-ink-soft border-b border-slate-100">
-              <tr><th className="py-3">Matière</th><th>CC</th><th>Examen</th><th>Moyenne</th></tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {G.map(g => (
-                <tr key={g.c} className="hover:bg-surface-muted">
-                  <td className="py-3 font-medium">{g.c}</td>
-                  <td>{g.cc}</td><td>{g.exam}</td>
-                  <td><Badge tone={tone(g.avg)}>{g.avg}/20</Badge></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTable
+            data={G}
+            rowKey={(g) => g.c}
+            columns={[
+              { key: 'course', header: 'Matière', cell: (g) => <span className="font-medium text-ink">{g.c}</span> },
+              { key: 'cc', header: 'CC', cell: (g) => g.cc },
+              { key: 'exam', header: 'Examen', cell: (g) => g.exam },
+              { key: 'avg', header: 'Moyenne', cell: (g) => <Badge tone={tone(g.avg)}>{g.avg}/20</Badge> },
+            ]}
+          />
         </CardBody>
       </Card>
     </div>

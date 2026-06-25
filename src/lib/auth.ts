@@ -1,21 +1,42 @@
-export type Role = 'admin' | 'student' | 'faculty';
+import { api } from './api';
+
+export type Role = 'admin' | 'student' | 'teacher';
 export interface User { id: string; name: string; email: string; role: Role; avatar?: string; }
 
 const KEY = 'eemci_user';
+const TOKEN_KEY = 'eemci_token';
 
 export const auth = {
-  login(email: string, password: string): User | null {
-    // Demo accounts
-    const demo: Record<string, User> = {
-      'admin@eemci.ma':   { id:'u1', name:'Admin EEMCI',   email:'admin@eemci.ma',   role:'admin' },
-      'student@eemci.ma': { id:'u2', name:'Salma Kabbaj',  email:'student@eemci.ma', role:'student' }
-    };
-    if (demo[email] && password === 'demo1234') {
-      localStorage.setItem(KEY, JSON.stringify(demo[email]));
-      return demo[email];
+  async login(email: string, password: string): Promise<User | null> {
+    try {
+      // CSRF cookie check - commonly needed for Laravel Sanctum/Session authentication
+      // If you are using JWT or just normal API tokens, you can remove this.
+      const response = await api.post('/auth/login', { email, password });
+      
+      const { user, token } = response.data;
+      
+      if (token) {
+        localStorage.setItem(TOKEN_KEY, token);
+      }
+      
+      if (user) {
+        const normalized = { ...user, name: user.full_name ?? user.name ?? '' };
+        localStorage.setItem(KEY, JSON.stringify(normalized));
+        return normalized;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Login error', error);
+      return null;
     }
-    return null;
   },
-  logout() { localStorage.removeItem(KEY); },
-  user(): User | null { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }
+  logout() { 
+    localStorage.removeItem(KEY); 
+    localStorage.removeItem(TOKEN_KEY);
+  },
+  user(): User | null { 
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } 
+    catch { return null; } 
+  }
 };

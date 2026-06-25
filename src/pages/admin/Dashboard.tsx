@@ -1,7 +1,8 @@
 import { Users, GraduationCap, CreditCard, CalendarCheck } from 'lucide-react';
 import { KpiCard } from '@/components/ui/KpiCard';
-import { Card, CardHeader, CardBody, CardTitle } from '@/components/ui/Card';
+import { Card, CardHeader, CardBody, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
 
 const ENROLL = [
@@ -16,22 +17,26 @@ const REV = [
 export default function Dashboard() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-semibold">Bonjour, Admin 👋</h1>
-        <p className="text-ink-soft mt-1">Voici un aperçu de l'activité EEMCI aujourd'hui.</p>
-      </div>
+      <PageHeader
+        eyebrow="Console admin"
+        title="Bonjour, Admin"
+        description="Voici un aperçu de l'activité EEMCI aujourd'hui."
+      />
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard label="Étudiants actifs" value="1 284" trend={12} icon={<Users className="w-4 h-4" />} tone="primary" />
         <KpiCard label="Enseignants" value="96" trend={3} icon={<GraduationCap className="w-4 h-4" />} tone="accent" />
         <KpiCard label="Revenus (MAD)" value="24M" trend={8} icon={<CreditCard className="w-4 h-4" />} tone="emerald" />
         <KpiCard label="Taux d'assiduité" value="87%" trend={-2} icon={<CalendarCheck className="w-4 h-4" />} tone="red" />
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-4">
+      <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle>Évolution des inscriptions</CardTitle>
+          <CardHeader className="flex-row items-center justify-between">
+            <div>
+              <CardTitle>Évolution des inscriptions</CardTitle>
+              <CardDescription>Progression mensuelle des nouveaux inscrits.</CardDescription>
+            </div>
             <Badge tone="primary">Année 2025-26</Badge>
           </CardHeader>
           <CardBody className="h-80">
@@ -54,7 +59,10 @@ export default function Dashboard() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>Revenus mensuels (M MAD)</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>Revenus mensuels</CardTitle>
+            <CardDescription>Montants en millions MAD.</CardDescription>
+          </CardHeader>
           <CardBody className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={REV}>
@@ -69,7 +77,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader><CardTitle>Candidatures récentes</CardTitle></CardHeader>
           <CardBody>
@@ -80,7 +88,7 @@ export default function Dashboard() {
                 { n:'Sara Tazi',        p:'Master RH', s:'Accepté' },
                 { n:'Anas Chraibi',     p:'Doctorat Européen', s:'En revue' }
               ].map(r => (
-                <li key={r.n} className="py-3 flex items-center justify-between">
+                <li key={r.n} className="flex items-center justify-between gap-4 py-3">
                   <div>
                     <p className="font-medium text-sm">{r.n}</p>
                     <p className="text-xs text-ink-soft">{r.p}</p>
@@ -102,7 +110,7 @@ export default function Dashboard() {
                 { n:'Hicham Bennani',a:'18 000 MAD', d:'30 j' },
                 { n:'Nadia Senhaji', a:'6 200 MAD',  d:'5 j' }
               ].map(r => (
-                <li key={r.n} className="py-3 flex items-center justify-between">
+                <li key={r.n} className="flex items-center justify-between gap-4 py-3">
                   <div>
                     <p className="font-medium text-sm">{r.n}</p>
                     <p className="text-xs text-ink-soft">Échéance dans {r.d}</p>

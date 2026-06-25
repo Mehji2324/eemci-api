@@ -1,5 +1,6 @@
 import { Card, CardBody } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const COURSES = [
   { code:'FIN-501', title:'Finance d\'entreprise', teacher:'Dr. Alaoui', progress:65 },
@@ -11,18 +12,18 @@ const COURSES = [
 export default function PortalCourses() {
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Mes cours</h1>
-      <div className="grid sm:grid-cols-2 gap-4">
+      <PageHeader title="Mes cours" description="Progression des modules suivis ce semestre." />
+      <div className="grid gap-4 sm:grid-cols-2">
         {COURSES.map(c => (
           <Card key={c.code}><CardBody>
             <div className="flex items-center justify-between">
               <Badge tone="primary">{c.code}</Badge>
               <span className="text-xs text-ink-soft">{c.progress}% complété</span>
             </div>
-            <h3 className="font-display text-lg font-semibold mt-3">{c.title}</h3>
+            <h3 className="mt-3 font-display text-lg font-semibold text-ink">{c.title}</h3>
             <p className="text-sm text-ink-soft mt-1">{c.teacher}</p>
-            <div className="mt-4 h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary-500 to-accent-500" style={{width:`${c.progress}%`}} />
+            <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100" aria-label={`${c.progress}% complété`}>
+              <div className="h-full rounded-full bg-primary-600" style={{width:`${c.progress}%`}} />
             </div>
           </CardBody></Card>
         ))}

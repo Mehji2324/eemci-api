@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Menu, X, Globe, Moon, Sun, ChevronDown, GraduationCap, Building2, BookOpen, Phone } from 'lucide-react';
 import { Logo } from '../ui/Logo';
 import { Button } from '../ui/Button';
@@ -7,39 +7,38 @@ import { cn } from '@/lib/cn';
 import { useUiStore } from '@/lib/store';
 import { useTranslation } from 'react-i18next';
 
-const MEGA_LINKS = [
-  {
-    to: '/about',
-    label: 'L\'École',
-    dropdown: [
-      { to: '/about', label: 'À propos', icon: Building2, desc: 'Notre histoire et notre mission' },
-      { to: '/alumni', label: 'Alumni', icon: GraduationCap, desc: '1 200+ diplômés actifs' },
-    ],
-  },
-  { to: '/schools', label: 'Nos Écoles' },
-  {
-    to: '/programs',
-    label: 'Formations',
-    dropdown: [
-      { to: '/programs?level=Technicien', label: 'Technicien (Bac)', icon: BookOpen, desc: 'Formation courte opérationnelle' },
-      { to: '/programs?level=Bac%2B2', label: 'Technicien Spécialisé (Bac+2)', icon: BookOpen, desc: 'Diplôme d\'État marocain' },
-      { to: '/programs?level=Bac%2B3', label: 'Bachelor (Bac+3)', icon: BookOpen, desc: 'Double diplôme franco-marocain' },
-      { to: '/programs?level=Bac%2B5', label: 'Master (Bac+5)', icon: BookOpen, desc: 'Master européen expert' },
-      { to: '/programs?level=Bac%2B8', label: 'Doctorat (Bac+8)', icon: BookOpen, desc: 'Recherche avancée' },
-    ],
-  },
-  { to: '/news', label: 'Actualités' },
-  { to: '/contact', label: 'Contact' },
-];
-
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const { theme, toggleTheme, lang, setLang } = useUiStore();
-  const { i18n } = useTranslation();
-  const location = useLocation();
+  const { i18n, t } = useTranslation();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const MEGA_LINKS = [
+    {
+      to: '/about',
+      label: t('nav.school'),
+      dropdown: [
+        { to: '/about', label: t('nav.about'), icon: Building2, desc: t('nav.history_mission') },
+        { to: '/alumni', label: t('nav.alumni'), icon: GraduationCap, desc: t('nav.alumni_desc') },
+      ],
+    },
+    { to: '/schools', label: t('nav.schools') },
+    {
+      to: '/programs',
+      label: t('nav.programs'),
+      dropdown: [
+        { to: '/programs?level=Technicien', label: t('nav.level_bac'), icon: BookOpen, desc: t('nav.level_bac_desc') },
+        { to: '/programs?level=Bac%2B2', label: t('nav.level_ts'), icon: BookOpen, desc: t('nav.level_ts_desc') },
+        { to: '/programs?level=Bac%2B3', label: t('nav.level_bachelor'), icon: BookOpen, desc: t('nav.level_bachelor_desc') },
+        { to: '/programs?level=Bac%2B5', label: t('nav.level_master'), icon: BookOpen, desc: t('nav.level_master_desc') },
+        { to: '/programs?level=Bac%2B8', label: t('nav.level_doctorate'), icon: BookOpen, desc: t('nav.level_doctorate_desc') },
+      ],
+    },
+    { to: '/news', label: t('nav.news') },
+    { to: '/contact', label: t('nav.contact') },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -48,11 +47,10 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
+  const closeMenus = () => {
     setMobileOpen(false);
     setActiveDropdown(null);
-  }, [location.pathname]);
+  };
 
   const changeLang = (l: 'fr' | 'en' | 'ar') => {
     setLang(l);
@@ -74,18 +72,18 @@ export default function Navbar() {
           <div className="hidden lg:flex border-b border-surface-border/40 dark:border-white/5">
             <div className="container h-9 flex items-center justify-between text-xs text-ink-muted dark:text-primary-300/50">
               <div className="flex items-center gap-4">
-                <a href="tel:+212535400417" className="flex items-center gap-1.5 hover:text-primary-600 transition">
-                  <Phone className="w-3 h-3" /> +212 535 40 04 17
+                <a href={`tel:${t('common.phone').replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-primary-600 transition">
+                  <Phone className="w-3 h-3" /> {t('common.phone')}
                 </a>
                 <span>·</span>
-                <a href="mailto:contact@eemci.ma" className="hover:text-primary-600 transition">contact@eemci.ma</a>
+                <a href={`mailto:${t('common.email')}`} className="hover:text-primary-600 transition">{t('common.email')}</a>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-accent-600 font-semibold">✓ Accrédité État marocain</span>
+                <span className="text-accent-600 font-semibold">✓ {t('common.accredited')}</span>
                 <span>·</span>
-                <span>Double diplôme FR–MA</span>
+                <span>{t('common.double_degree')}</span>
                 <span>·</span>
-                <span>Membre FEDE</span>
+                <span>{t('common.fede_member')}</span>
               </div>
             </div>
           </div>
@@ -105,6 +103,7 @@ export default function Navbar() {
               >
                 <NavLink
                   to={link.to}
+                  onClick={() => setActiveDropdown(null)}
                   className={({ isActive }) =>
                     cn(
                       'nav-link inline-flex items-center gap-1',
@@ -125,13 +124,17 @@ export default function Navbar() {
 
                 {/* Dropdown */}
                 {link.dropdown && activeDropdown === link.to && (
-                  <div className="absolute top-full left-0 mt-2 w-64 glass rounded-2xl shadow-lg border border-white/50 dark:border-white/10 dark:bg-primary-900/90 py-2 animate-fade-up">
+                  <div className={cn(
+                    "absolute top-full mt-2 w-64 glass rounded-2xl shadow-lg border border-white/50 dark:border-white/10 dark:bg-primary-900/90 py-2 animate-fade-up",
+                    i18n.language === 'ar' ? "right-0" : "left-0"
+                  )}>
                     {link.dropdown.map((item) => {
                       const Icon = item.icon;
                       return (
                         <Link
                           key={item.to}
                           to={item.to}
+                          onClick={closeMenus}
                           className="flex items-start gap-3 px-4 py-3 hover:bg-primary-50/80 dark:hover:bg-white/5 transition rounded-xl mx-1"
                         >
                           <span className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-800 grid place-items-center shrink-0 mt-0.5">
@@ -156,7 +159,8 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               className="w-9 h-9 rounded-xl grid place-items-center text-ink-soft dark:text-primary-200 hover:bg-surface-subtle dark:hover:bg-white/8 transition"
-              aria-label="Basculer thème"
+              title={t('common.toggle_theme')}
+              aria-label={t('common.toggle_theme')}
             >
               {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
             </button>
@@ -168,14 +172,18 @@ export default function Navbar() {
                 <span>{lang.toUpperCase()}</span>
                 <ChevronDown className="w-3 h-3" />
               </button>
-              <div className="absolute right-0 top-full mt-2 w-36 glass dark:bg-primary-900/95 rounded-xl shadow-md border border-white/50 dark:border-white/10 py-1.5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-50">
+              <div className={cn(
+                "absolute top-full mt-2 w-36 glass dark:bg-primary-900/95 rounded-xl shadow-md border border-white/50 dark:border-white/10 py-1.5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity z-50",
+                i18n.language === 'ar' ? "left-0" : "right-0"
+              )}>
                 {(['fr', 'en', 'ar'] as const).map((l) => (
                   <button
                     key={l}
                     onClick={() => changeLang(l)}
                     className={cn(
                       'w-full text-left px-4 py-2 text-sm hover:bg-primary-50 dark:hover:bg-white/8 transition rounded-lg mx-auto',
-                      lang === l ? 'text-primary-700 font-semibold' : 'text-ink-soft dark:text-primary-200'
+                      lang === l ? 'text-primary-700 font-semibold' : 'text-ink-soft dark:text-primary-200',
+                      i18n.language === 'ar' ? 'text-right' : 'text-left'
                     )}
                   >
                     {l === 'fr' ? 'Français' : l === 'en' ? 'English' : 'العربية'}
@@ -186,19 +194,19 @@ export default function Navbar() {
 
             <Link to="/login" className="hidden md:block">
               <Button variant="ghost" size="sm" className="dark:text-white">
-                Connexion
+                {t('nav.login')}
               </Button>
             </Link>
             <Link to="/admissions/apply" className="hidden md:block">
               <Button variant="accent" size="sm">
-                S'inscrire
+                {t('nav.apply')}
               </Button>
             </Link>
 
             {/* Mobile hamburger */}
             <button
               className="lg:hidden w-10 h-10 rounded-xl grid place-items-center text-ink dark:text-white hover:bg-surface-subtle dark:hover:bg-white/8 transition"
-              aria-label="Ouvrir menu"
+              aria-label={t('common.open_menu')}
               onClick={() => setMobileOpen(true)}
             >
               <Menu className="w-5 h-5" />
@@ -217,13 +225,16 @@ export default function Navbar() {
           />
 
           {/* Panel */}
-          <aside className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-sm bg-white dark:bg-primary-950 shadow-2xl flex flex-col animate-fade-up">
+          <aside className={cn(
+            "absolute top-0 bottom-0 w-[85vw] max-w-sm bg-white dark:bg-primary-950 shadow-2xl flex flex-col animate-fade-up",
+            i18n.language === 'ar' ? "left-0" : "right-0"
+          )}>
             <div className="flex items-center justify-between p-5 border-b border-surface-border dark:border-white/8">
               <Logo size="md" />
               <button
                 onClick={() => setMobileOpen(false)}
                 className="w-9 h-9 rounded-xl grid place-items-center text-ink-soft hover:bg-surface-subtle dark:text-white dark:hover:bg-white/8 transition"
-                aria-label="Fermer"
+                aria-label={t('common.close')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -234,6 +245,7 @@ export default function Navbar() {
                 <div key={link.to}>
                   <NavLink
                     to={link.to}
+                    onClick={closeMenus}
                     className={({ isActive }) =>
                       cn(
                         'flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-medium transition',
@@ -246,11 +258,16 @@ export default function Navbar() {
                     {link.label}
                   </NavLink>
                   {link.dropdown && (
-                    <div className="ml-4 mt-1 space-y-0.5 border-l-2 border-surface-border dark:border-white/10 pl-4">
+                    <div className={cn(
+                      "mt-1 space-y-0.5 pl-4",
+                      i18n.language === 'ar' ? "mr-4 border-r-2 border-l-0 pr-4" : "ml-4 border-l-2 border-r-0 pl-4",
+                      "border-surface-border dark:border-white/10"
+                    )}>
                       {link.dropdown.map((sub) => (
                         <Link
                           key={sub.to}
                           to={sub.to}
+                          onClick={closeMenus}
                           className="block py-2 text-sm text-ink-soft dark:text-primary-300 hover:text-primary-600 dark:hover:text-white transition"
                         >
                           {sub.label}
@@ -279,11 +296,11 @@ export default function Navbar() {
                   </button>
                 ))}
               </div>
-              <Link to="/login" className="block">
-                <Button variant="secondary" size="lg" className="w-full">Connexion</Button>
+              <Link to="/login" onClick={closeMenus} className="block">
+                <Button variant="secondary" size="lg" className="w-full">{t('nav.login')}</Button>
               </Link>
-              <Link to="/admissions/apply" className="block">
-                <Button variant="accent" size="lg" className="w-full">S'inscrire maintenant</Button>
+              <Link to="/admissions/apply" onClick={closeMenus} className="block">
+                <Button variant="accent" size="lg" className="w-full">{t('nav.register_now')}</Button>
               </Link>
             </div>
           </aside>

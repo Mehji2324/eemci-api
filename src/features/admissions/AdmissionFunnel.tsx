@@ -5,11 +5,12 @@ import {
   User, BookOpen, FileUp, CheckCircle, 
   ChevronRight, ChevronLeft, Upload, Loader2 
 } from 'lucide-react';
+import { api } from '@/lib/api';
 import { applicationSchema } from './schema';
 import type { ApplicationFormData } from './schema';
 import { PROGRAMS } from '../../types/program';
 import { Button } from '../../components/ui/Button';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/cn';
 import { supabase } from '../../lib/supabase';
 
 const STEPS = [
@@ -27,7 +28,6 @@ export const AdmissionFunnel: React.FC = () => {
   const {
     register,
     handleSubmit,
-    watch,
     control,
     formState: { errors },
   } = useForm<ApplicationFormData>({
@@ -39,6 +39,8 @@ export const AdmissionFunnel: React.FC = () => {
   const selectedGender = useWatch({ control, name: 'gender' });
   const selectedProgramId = useWatch({ control, name: 'programId' });
   const firstName = useWatch({ control, name: 'firstName' });
+  const lastName = useWatch({ control, name: 'lastName' });
+  const email = useWatch({ control, name: 'email' });
   const filteredPrograms = PROGRAMS.filter(p => p.school === selectedSchool);
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
@@ -47,20 +49,29 @@ export const AdmissionFunnel: React.FC = () => {
   const onSubmit = async (data: ApplicationFormData) => {
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const { error } = await supabase
-        .from('applications')
-        .insert([{ ...data, status: 'pending' }]);
-
-      if (error && error.code !== '42P01') {
-        throw error;
-      }
-
+      await api.post('/auth/register', {
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        password: 'TempPass123!',
+        password_confirmation: 'TempPass123!',
+        date_of_birth: data.birthDate,
+        place_of_birth: data.placeOfBirth || 'Non renseigné',
+        gender: data.gender === 'Homme' ? 'M' : 'F',
+        nationality: data.nationality || 'Marocain',
+        address: data.address || 'Non renseigné',
+        guardian_name: data.guardianName || null,
+        guardian_phone: data.guardianPhone || null,
+      });
       setIsSuccess(true);
-    } catch (error) {
-      console.error('Submission error:', error);
-      alert('Une erreur est survenue lors de la soumission. Veuillez réessayer.');
+    } catch (err: any) {
+      console.error('API Error:', err.response?.data);
+      const errors = err.response?.data?.errors;
+      const message = errors
+        ? Object.values(errors).flat().join(', ')
+        : err.response?.data?.message || 'Une erreur est survenue';
+      alert(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -226,13 +237,21 @@ export const AdmissionFunnel: React.FC = () => {
                       { id: 'diploma', label: 'Dernier Diplôme' },
                       { id: 'transcripts', label: 'Relevés de notes' },
                     ].map(doc => (
-                      <div key={doc.id} className="p-6 border-2 border-dashed border-neutral-200 rounded-2xl flex flex-col items-center text-center group hover:border-primary-500 hover:bg-primary-50/30 transition-all cursor-pointer">
+                      <label key={doc.id} className="p-6 border-2 border-dashed border-neutral-200 rounded-2xl flex flex-col items-center text-center group hover:border-primary-500 hover:bg-primary-50/30 transition-all cursor-pointer">
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) alert(`Document "${file.name}" sélectionné. Il sera soumis avec votre dossier.`);
+                          }} 
+                        />
                         <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400 group-hover:bg-primary-500 group-hover:text-white transition-all mb-4">
                           <Upload size={24} />
                         </div>
                         <h4 className="font-bold text-primary-900 text-sm mb-1">{doc.label}</h4>
                         <p className="text-xs text-neutral-400">Glisser-déposer ou cliquer pour choisir</p>
-                      </div>
+                      </label>
                     ))}
                   </div>
                 </div>
@@ -250,11 +269,11 @@ export const AdmissionFunnel: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Candidat</label>
-                        <div className="font-bold text-primary-900">{watch('firstName')} {watch('lastName')}</div>
+                        <div className="font-bold text-primary-900">{firstName} {lastName}</div>
                       </div>
                       <div>
                         <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Email</label>
-                        <div className="font-bold text-primary-900">{watch('email')}</div>
+                        <div className="font-bold text-primary-900">{email}</div>
                       </div>
                     </div>
                     <div>
@@ -294,14 +313,17 @@ export const AdmissionFunnel: React.FC = () => {
                     Continuer <ChevronRight size={18} />
                   </Button>
                 ) : (
-                  <Button 
-                    type="submit" 
-                    variant="secondary" 
-                    disabled={isSubmitting}
-                    className="gap-2 px-10 h-14"
-                  >
-                    {isSubmitting ? <Loader2 className="animate-spin" /> : 'Confirmer ma candidature'}
-                  </Button>
+                  <>
+                    {console.log('ERRORS:', errors)}
+                    <Button 
+                      type="submit" 
+                      variant="secondary" 
+                      disabled={isSubmitting}
+                      className="gap-2 px-10 h-14"
+                    >
+                      {isSubmitting ? <Loader2 className="animate-spin" /> : 'Confirmer ma candidature'}
+                    </Button>
+                  </>
                 )}
               </div>
             </form>

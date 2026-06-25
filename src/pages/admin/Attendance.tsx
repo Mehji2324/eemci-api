@@ -1,5 +1,7 @@
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { DataTable } from '@/components/ui/DataTable';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const DATA = [
@@ -7,13 +9,20 @@ const DATA = [
   { d:'Mer', present:94, absent:6 },{ d:'Jeu', present:90, absent:10 },
   { d:'Ven', present:85, absent:15 }
 ];
+const STUDENTS = [
+  { name:'Sofia Alami', days:[true,true,true,true,true] },
+  { name:'Karim Naciri', days:[true,false,true,true,true] },
+  { name:'Hicham Bennani', days:[true,true,true,false,true] },
+  { name:'Imane El Idrissi', days:[true,true,true,true,false] },
+  { name:'Yassine Berrada', days:[false,true,true,true,true] }
+];
 
 export default function Attendance() {
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Présences</h1>
+      <PageHeader title="Présences" description="Suivi hebdomadaire de l'assiduité par programme." />
       <Card>
-        <CardHeader className="flex items-center justify-between">
+        <CardHeader className="flex-row items-center justify-between">
           <CardTitle>Assiduité hebdomadaire</CardTitle>
           <Badge tone="emerald">Moyenne : 89.8%</Badge>
         </CardHeader>
@@ -34,23 +43,23 @@ export default function Attendance() {
       <Card>
         <CardHeader><CardTitle>Présences récentes — Master Finance · M1</CardTitle></CardHeader>
         <CardBody>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs uppercase tracking-wider text-ink-soft border-b border-slate-100">
-                <tr><th className="py-3">Étudiant</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th></tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {['Sofia Alami','Karim Naciri','Hicham Bennani','Imane El Idrissi','Yassine Berrada'].map(n => (
-                  <tr key={n}><td className="py-3 font-medium">{n}</td>
-                    {Array.from({length:5}).map((_,i)=>{
-                      const p = Math.random() > 0.15;
-                      return <td key={i}><span className={`inline-block w-3 h-3 rounded-full ${p?'bg-emerald-500':'bg-red-400'}`} /></td>;
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            data={STUDENTS}
+            rowKey={(row) => row.name}
+            columns={[
+              { key: 'student', header: 'Étudiant', cell: (row) => <span className="font-medium text-ink">{row.name}</span> },
+              ...['Lun','Mar','Mer','Jeu','Ven'].map((day, index) => ({
+                key: day,
+                header: day,
+                cell: (row: typeof STUDENTS[number]) => (
+                  <span
+                    className={`inline-block h-3 w-3 rounded-full ${row.days[index] ? 'bg-emerald-500' : 'bg-rose-400'}`}
+                    aria-label={row.days[index] ? 'Présent' : 'Absent'}
+                  />
+                ),
+              })),
+            ]}
+          />
         </CardBody>
       </Card>
     </div>

@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import {
   LayoutDashboard, Users, GraduationCap, BookOpen, CalendarCheck,
-  Award, CreditCard, BarChart3, Settings, LogOut, Menu, X, Bell, Search
+  Award, CreditCard, BarChart3, Settings, LogOut, Menu, X, Bell, Search, PanelLeftClose
 } from 'lucide-react';
 import { Logo } from '../ui/Logo';
 import { auth } from '@/lib/auth';
@@ -26,37 +26,38 @@ export default function DashboardLayout() {
   const user = auth.user();
 
   return (
-    <div className="min-h-screen bg-surface-muted">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-slate-50">
       <aside className={cn(
-        'fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-slate-200/70 transition-transform lg:translate-x-0',
+        'fixed inset-y-0 left-0 z-40 w-72 border-r border-slate-200/80 bg-white transition-transform lg:translate-x-0',
         open ? 'translate-x-0' : '-translate-x-full'
       )}>
-        <div className="h-16 px-6 flex items-center justify-between border-b border-slate-100">
+        <div className="flex h-16 items-center justify-between border-b border-slate-100 px-5">
           <Logo />
-          <button onClick={()=>setOpen(false)} className="lg:hidden p-2"><X className="w-5 h-5" /></button>
+          <button onClick={()=>setOpen(false)} className="rounded-lg p-2 text-ink-soft transition hover:bg-slate-100 hover:text-ink lg:hidden" aria-label="Fermer le menu">
+            <X className="h-5 w-5" />
+          </button>
         </div>
-        <nav className="p-4 space-y-1">
+        <nav className="space-y-1 p-3" aria-label="Administration">
           {NAV.map(({to,label,icon:Icon,end}) => (
             <NavLink key={to} to={to} end={end} onClick={()=>setOpen(false)}
               className={({isActive})=>cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition',
-                isActive ? 'bg-primary-50 text-primary-700' : 'text-ink-soft hover:bg-surface-subtle hover:text-ink')}>
-              <Icon className="w-4 h-4" />{label}
+                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition',
+                isActive ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-100' : 'text-ink-soft hover:bg-slate-100 hover:text-ink')}>
+              <Icon className="h-4 w-4" />{label}
             </NavLink>
           ))}
         </nav>
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="p-4 rounded-2xl bg-surface-muted border border-slate-200/70">
+        <div className="absolute bottom-4 left-3 right-3">
+          <div className="rounded-lg border border-slate-200/80 bg-slate-50 p-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 grid place-items-center text-white font-medium">
+              <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary-700 text-sm font-semibold text-white">
                 {user?.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{user?.name}</p>
                 <p className="text-xs text-ink-soft truncate">{user?.email}</p>
               </div>
-              <button onClick={()=>{auth.logout(); nav('/login');}} className="p-2 hover:bg-white rounded-lg" title="Déconnexion">
+              <button onClick={()=>{auth.logout(); nav('/login');}} className="rounded-lg p-2 text-ink-soft transition hover:bg-white hover:text-ink" title="Déconnexion" aria-label="Déconnexion">
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
@@ -65,22 +66,24 @@ export default function DashboardLayout() {
       </aside>
 
       <div className="lg:pl-72">
-        {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200/70 sticky top-0 z-30">
-          <div className="h-full px-4 lg:px-8 flex items-center gap-4">
-            <button onClick={()=>setOpen(true)} className="lg:hidden p-2"><Menu className="w-5 h-5" /></button>
+        <header className="sticky top-0 z-30 h-16 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+          <div className="flex h-full items-center gap-3 px-4 lg:px-8">
+            <button onClick={()=>setOpen(true)} className="rounded-lg p-2 text-ink-soft transition hover:bg-slate-100 hover:text-ink lg:hidden" aria-label="Ouvrir le menu">
+              <Menu className="h-5 w-5" />
+            </button>
+            <PanelLeftClose className="hidden h-5 w-5 text-slate-300 lg:block" aria-hidden="true" />
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input placeholder="Rechercher étudiant, cours..." className="w-full h-10 pl-10 pr-4 rounded-xl bg-surface-muted border border-transparent focus:bg-white focus:border-slate-200 outline-none text-sm" />
+              <input placeholder="Rechercher étudiant, cours..." className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm outline-none transition focus:border-primary-300 focus:bg-white focus:ring-2 focus:ring-primary-100" />
             </div>
-            <button className="relative p-2 hover:bg-surface-muted rounded-lg" aria-label="Notifications">
+            <button className="relative rounded-lg p-2 text-ink-soft transition hover:bg-slate-100 hover:text-ink" aria-label="Notifications">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent-500" />
             </button>
           </div>
         </header>
 
-        <main className="p-4 lg:p-8">
+        <main id="main" className="p-4 sm:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

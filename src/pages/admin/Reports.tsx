@@ -1,4 +1,5 @@
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/Card';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 const DOMAIN = [
@@ -14,8 +15,8 @@ const PERF = [
 export default function Reports() {
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Rapports</h1>
-      <div className="grid lg:grid-cols-2 gap-4">
+      <PageHeader title="Rapports" description="Indicateurs académiques et analytiques consolidés." />
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader><CardTitle>Répartition par domaine</CardTitle></CardHeader>
           <CardBody className="h-80">

@@ -1,19 +1,30 @@
 export const SITE = {
   name: 'EEMCI',
-  fullName: 'École Européenne de Management et de Commerce International',
+  fullName: 'École Européenne de Management, Commerce & IT et d\'Hôtellerie & Tourisme',
   tagline: 'De Meknès au monde — votre diplôme franco-marocain d\'excellence.',
+  city: 'Meknès, Maroc',
+  director: 'Dr. Ahmed Sbaïbi',
+  levels: 'Bac → Bac+8',
+  doubleDegree: 'Maroc + France',
   phone: '0535400417',
   phone2: '0661319276',
   phone3: '0661822936',
   phone4: '0661963888',
   whatsapp: '212661337841',
   email: 'contact@eemci.ma',
-  address: 'Rue Accra, Imm 14, Ville Nouvelle, Meknès 50000, Maroc',
+  address: 'Rue Accra, Imm 14, Ville Nouvelle, Meknès 50000, Maroc (En face hôtel Nice)',
   addressUrl: 'https://maps.app.goo.gl/H67wTNyMkyUZpjdH6',
+  gps: { lat: 33.8989936, lng: -5.5494582 },
   facebook: 'https://web.facebook.com/EEMCI.OFFICIEL',
   instagram: 'https://www.instagram.com/eemcimeknes/',
   founded: 2011
 };
+
+export const OPENING_HOURS = [
+  { day: 'Lundi – Vendredi', hours: '8h30–12h30 / 14h30–19h15' },
+  { day: 'Samedi', hours: '9h00–12h30 / 14h30–18h30' },
+  { day: 'Dimanche', hours: '10h00–13h00' },
+];
 
 export const STATS = [
   { value: 14, suffix: '+', label: 'Années d\'expérience', sub: 'Depuis 2011' },
@@ -29,6 +40,31 @@ export const PILLARS = [
   { icon: 'Users',     title: 'Suivi personnalisé',        text: 'Accompagnement individuel de l\'inscription jusqu\'à l\'insertion professionnelle.' },
   { icon: 'MapPin',    title: 'Campus en ville nouvelle',  text: 'Salles équipées pour le travail collaboratif et la pratique professionnelle.' },
   { icon: 'TrendingUp',title: 'Insertion professionnelle', text: 'Plus de 90 % de nos diplômés en activité dans les 6 mois.' }
+];
+
+export const CORE_VALUES = [
+  'Excellence Accréditée',
+  'Ouverture Mondiale',
+  'Proximité & Expertise',
+  'Diversité & Partage',
+];
+
+export const HISTORY = [
+  { year: '2011', event: 'Fondation à Meknès' },
+  { year: '2013–2015', event: 'Accréditation État Marocain' },
+  { year: '2015–2016', event: 'Partenariats européens FEDE et MIIB\'S, double diplôme Maroc + France' },
+  { year: '2018', event: 'Alliances Adecco, DEKRA, APTIV et Journée Panafricaine' },
+  { year: '2030', event: 'Vision : référence africaine en Management, Commerce & IT' },
+];
+
+export const SITEMAP = [
+  { label: 'Accueil', url: '/' },
+  { label: 'À Propos', url: '/about' },
+  { label: 'École Management & IT', url: '/schools' },
+  { label: 'École Hôtellerie & Tourisme', url: '/schools' },
+  { label: 'Toutes les formations', url: '/programs' },
+  { label: 'Contact', url: '/contact' },
+  { label: 'Pré-inscription', url: '/admissions/apply' },
 ];
 
 export const SCHOOLS = [
@@ -359,47 +395,47 @@ export const TESTIMONIALS = [
 
 export const PARTNERS = [
   {
+    name: 'MIIB\'S',
+    desc: 'Partenaire académique français — validation Bachelor, Master et Doctorat européens',
+    logo: 'https://eemci.ma/wp-content/uploads/2025/12/2.png',
+    url: 'https://eemci.ma',
+    category: 'Académique'
+  },
+  {
     name: 'WES\'SUP',
-    desc: 'École supérieure partenaire — réseau européen d\'enseignement supérieur',
+    desc: 'Méthodes pédagogiques innovantes, Management & IT',
     logo: 'https://eemci.ma/wp-content/uploads/2025/12/1.png',
     url: 'https://wessup.fr',
     category: 'Académique'
   },
   {
     name: 'FEDE',
-    desc: 'Fédération Européenne des Écoles — statut participatif au Conseil de l\'Europe',
+    desc: 'Fédération Européenne des Écoles — système LMD et standards européens',
     logo: 'https://eemci.ma/wp-content/uploads/2025/12/LES-LOGOS-DES-PQR.png',
     url: 'https://fede.info',
     category: 'Académique'
   },
   {
     name: 'Adecco',
-    desc: 'Leader mondial du recrutement — partenaire emploi et insertion professionnelle',
+    desc: 'Stages et insertion professionnelle',
     logo: 'https://eemci.ma/wp-content/uploads/2025/12/3.png',
     url: 'https://adecco.ma',
     category: 'Entreprise'
   },
   {
     name: 'DEKRA',
-    desc: 'Organisme international de certification et d\'inspection industrielle',
+    desc: 'Qualité, sécurité et certification internationale',
     logo: 'https://eemci.ma/wp-content/uploads/2025/12/4.png',
     url: 'https://dekra.com',
     category: 'Certification'
   },
   {
     name: 'APTIV',
-    desc: 'Multinationale technologique — partenaire professionnel et stages industriels',
+    desc: 'Technologies intelligentes et systèmes embarqués',
     logo: 'https://eemci.ma/wp-content/uploads/2025/12/5.png',
     url: 'https://aptiv.com',
     category: 'Entreprise'
   },
-  {
-    name: 'Partenaire',
-    desc: 'Réseau de partenaires institutionnels et professionnels EEMCI',
-    logo: 'https://eemci.ma/wp-content/uploads/2025/12/2.png',
-    url: 'https://eemci.ma',
-    category: 'Institutionnel'
-  }
 ];
 
 export const NEWS = [

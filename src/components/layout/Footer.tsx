@@ -79,7 +79,7 @@ export default function Footer() {
               </h4>
               <ul className="space-y-3">
                 {links.map((link) => (
-                  <li key={link.to}>
+                  <li key={`${heading}-${link.label}`}>
                     <Link
                       to={link.to}
                       className="text-sm text-primary-200/70 hover:text-white transition flex items-center gap-1 group"
