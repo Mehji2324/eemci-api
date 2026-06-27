@@ -16,20 +16,21 @@ export default function Students() {
     first_name: '', 
     last_name: '', 
     email: '', 
-    password: '', 
-    password_confirmation: '', 
+    password: 'TempPass123!', 
+    password_confirmation: 'TempPass123!', 
     phone: '', 
     date_of_birth: '', 
     place_of_birth: '', 
     gender: 'M', 
     nationality: '', 
-    address: '', 
-    guardian_name: '', 
-    guardian_phone: '' 
+    address: 'Non renseigné', 
+    guardian_name: null as string | null, 
+    guardian_phone: null as string | null
   });
   const [error, setError] = useState('');
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [credentials, setCredentials] = useState<{email: string, password: string} | null>(null);
 
   useEffect(() => {
     fetchStudents();
@@ -63,24 +64,43 @@ export default function Students() {
     e.preventDefault();
     setError('');
     try {
-      await api.post('/auth/register', formData);
+      const submitData = {
+        ...formData,
+        password: 'TempPass123!',
+        password_confirmation: 'TempPass123!',
+        address: formData.address || 'Non renseigné',
+        guardian_name: formData.guardian_name || null,
+        guardian_phone: formData.guardian_phone || null,
+      };
+      const registerRes = await api.post('/auth/register', submitData);
+      const studentId = registerRes.data?.user?.id;
+      
+      if (studentId) {
+        // Find the student record by user_id and validate
+        const studentsRes = await api.get('/students');
+        const students = studentsRes.data.data ?? studentsRes.data;
+        const student = students.find((s: any) => s.user_id === studentId || s.user?.id === studentId);
+        
+        if (student) {
+          const validateRes = await api.post(`/admin/students/${student.id}/validate`, {});
+          const creds = validateRes.data?.credentials;
+          if (creds) {
+            setCredentials({ email: creds.email, password: creds.password });
+          }
+        }
+      }
+      
       setIsModalOpen(false);
       setFormData({ 
-        first_name: '', 
-        last_name: '', 
-        email: '', 
-        password: '', 
-        password_confirmation: '', 
-        phone: '', 
-        date_of_birth: '', 
-        place_of_birth: '', 
-        gender: 'M', 
-        nationality: '', 
-        address: '', 
-        guardian_name: '', 
-        guardian_phone: '' 
+        first_name: '', last_name: '', email: '', 
+        password: 'TempPass123!', 
+        password_confirmation: 'TempPass123!', 
+        phone: '', date_of_birth: '', 
+        place_of_birth: '', gender: 'M', nationality: '', 
+        address: 'Non renseigné', 
+        guardian_name: null, 
+        guardian_phone: null 
       });
-      alert('Étudiant ajouté avec succès');
       fetchStudents();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Une erreur est survenue');
@@ -107,7 +127,7 @@ export default function Students() {
             data={filtered}
             rowKey={(r) => r.id}
             columns={[
-              { key: 'matricule', header: 'ID', cell: (r) => <span className="font-mono text-xs text-ink-soft">{r.matricule ?? r.id}</span> },
+              { key: 'matricule', header: 'ID', cell: (r) => <span className="font-mono text-xs text-ink-soft">{r.id}</span> },
               { key: 'name', header: 'Nom', cell: (r) => <span className="font-medium text-ink">{r.user?.first_name + ' ' + r.user?.last_name}</span> },
               { key: 'program', header: 'Programme', cell: (r) => <span className="text-ink-soft">{r.filiere?.name ?? '—'}</span> },
               { key: 'level', header: 'Niveau', cell: (r) => <Badge tone="slate">{r.classe?.level ?? '—'}</Badge> },
@@ -192,8 +212,6 @@ export default function Students() {
                   <Input label="Nom" required value={formData.last_name} onChange={e => setFormData({...formData, last_name: e.target.value})} />
                 </div>
                 <Input label="Email" type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                <Input label="Mot de passe" type="password" required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
-                <Input label="Confirmation mot de passe" type="password" required value={formData.password_confirmation} onChange={e => setFormData({...formData, password_confirmation: e.target.value})} />
                 <Input label="Téléphone" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                 <Input label="Date de naissance" type="date" required value={formData.date_of_birth} onChange={e => setFormData({...formData, date_of_birth: e.target.value})} />
                 <Input label="Lieu de naissance" value={formData.place_of_birth} onChange={e => setFormData({...formData, place_of_birth: e.target.value})} />
@@ -205,13 +223,76 @@ export default function Students() {
                   </select>
                 </div>
                 <Input label="Nationalité" value={formData.nationality} onChange={e => setFormData({...formData, nationality: e.target.value})} />
-                <Input label="Adresse" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
-                <Input label="Nom du tuteur" value={formData.guardian_name} onChange={e => setFormData({...formData, guardian_name: e.target.value})} />
-                <Input label="Téléphone tuteur" value={formData.guardian_phone} onChange={e => setFormData({...formData, guardian_phone: e.target.value})} />
                 <Button type="submit" className="w-full">Enregistrer</Button>
               </form>
             </CardBody>
           </Card>
+        </div>
+      )}
+
+      {credentials && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+                <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Étudiant ajouté avec succès</h2>
+                <p className="text-sm text-slate-500">Les identifiants ont été générés automatiquement</p>
+              </div>
+            </div>
+            <div className="space-y-3 rounded-lg bg-slate-50 p-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Email académique</p>
+                <p className="mt-1 font-mono text-sm font-medium text-slate-900">{credentials.email}</p>
+              </div>
+              <div className="border-t border-slate-200 pt-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Mot de passe temporaire</p>
+                <p className="mt-1 font-mono text-sm font-medium text-slate-900">{credentials.password}</p>
+              </div>
+            </div>
+            <p className="mt-4 text-xs text-slate-400">L'étudiant devra changer son mot de passe lors de la première connexion.</p>
+            <button
+              onClick={() => setCredentials(null)}
+              className="mt-6 w-full rounded-lg bg-primary-700 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-primary-800"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
+
+      {credentialsView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-slate-900">Informations de connexion</h2>
+              <p className="text-sm text-slate-500">{credentialsView.name}</p>
+            </div>
+            <div className="space-y-3 rounded-lg bg-slate-50 p-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Matricule</p>
+                <p className="mt-1 font-mono text-sm font-medium text-slate-900">{credentialsView.matricule}</p>
+              </div>
+              <div className="border-t border-slate-200 pt-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Email académique</p>
+                <p className="mt-1 font-mono text-sm font-medium text-slate-900">{credentialsView.email}</p>
+              </div>
+              <div className="border-t border-slate-200 pt-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Mot de passe</p>
+                <p className="mt-1 text-sm text-slate-500 italic">Réinitialisable par l'administrateur</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setCredentialsView(null)}
+              className="mt-6 w-full rounded-lg bg-primary-700 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-primary-800"
+            >
+              Fermer
+            </button>
+          </div>
         </div>
       )}
     </div>
